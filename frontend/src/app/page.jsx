@@ -107,16 +107,16 @@ export default async function HomePage() {
       <CostEstimatorWidget costs={costs} />
 
       {/* Emergency Call to Action Banner */}
-      <section className="py-16 bg-gradient-to-r from-rose-600 via-rose-700 to-red-800 text-white relative overflow-hidden">
+      <section className="py-16 bg-gradient-to-r from-rose-600 via-rose-700 to-red-800 dark:from-slate-950 dark:via-rose-950 dark:to-slate-950 text-white relative overflow-hidden transition-colors duration-300 border-t border-rose-500/20 dark:border-rose-900/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-left max-w-2xl">
-            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-extrabold tracking-wider uppercase">
+            <span className="bg-white/20 dark:bg-rose-500/20 px-3 py-1 rounded-full text-xs font-extrabold tracking-wider uppercase text-rose-100 dark:text-rose-300 border border-white/20 dark:border-rose-700/50">
               24/7 Medical Emergency Assistance
             </span>
             <h2 className="text-3xl font-extrabold tracking-tight">
               Need Immediate Hospitalization or Ambulance?
             </h2>
-            <p className="text-rose-100 text-sm">
+            <p className="text-rose-100 dark:text-slate-300 text-sm font-medium">
               Call our national health hotline 10616 for instant ambulance dispatch, ICU bed availability checks, and emergency doctor guidance.
             </p>
           </div>
@@ -124,7 +124,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <a
               href="tel:10616"
-              className="flex items-center justify-center space-x-2 bg-white text-rose-700 hover:bg-rose-50 font-extrabold px-6 py-3.5 rounded-2xl shadow-xl transition"
+              className="flex items-center justify-center space-x-2 bg-white text-rose-700 hover:bg-rose-50 dark:bg-rose-600 dark:text-white dark:hover:bg-rose-500 font-extrabold px-6 py-3.5 rounded-2xl shadow-xl transition"
             >
               <PhoneCall className="w-5 h-5 animate-bounce" />
               <span>Call Emergency Hotline 10616</span>
