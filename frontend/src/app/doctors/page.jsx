@@ -109,14 +109,17 @@ function DoctorsContent() {
                 <option value="All">All Specialties</option>
                 <option value="Cardiology">Cardiology</option>
                 <option value="Gynecology">Gynecology & Obstetrics</option>
-                <option value="Neurology">Neurology</option>
-                <option value="Orthopedics">Orthopedics</option>
-                <option value="Pediatrics">Pediatrics</option>
-                <option value="Gastroenterology">Gastroenterology</option>
-                <option value="Oncology">Oncology</option>
-                <option value="Dermatology">Dermatology</option>
+                <option value="Neurology">Neurology & Neurosurgery</option>
+                <option value="Orthopedics">Orthopedics & Spine</option>
+                <option value="Pediatrics">Pediatrics & Neonatology</option>
+                <option value="Gastroenterology">Gastroenterology & Hepatology</option>
+                <option value="Oncology">Oncology & Cancer Care</option>
+                <option value="Dermatology">Dermatology & Skin</option>
                 <option value="ENT">ENT (Ear, Nose, Throat)</option>
+                <option value="Internal Medicine">Internal Medicine & Diabetes</option>
                 <option value="Rheumatology">Rheumatology</option>
+                <option value="Urology">Urology</option>
+                <option value="Psychiatry">Psychiatry</option>
               </select>
             </div>
 
@@ -128,11 +131,17 @@ function DoctorsContent() {
                 onChange={(e) => setCity(e.target.value)}
                 className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl text-xs border border-slate-200 dark:border-slate-700 outline-none cursor-pointer"
               >
-                <option value="All">All Cities</option>
+                <option value="All">All Districts</option>
                 <option value="Dhaka">Dhaka</option>
                 <option value="Chittagong">Chittagong</option>
                 <option value="Sylhet">Sylhet</option>
                 <option value="Rajshahi">Rajshahi</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Barisal">Barisal</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+                <option value="Comilla">Comilla</option>
+                <option value="Bogura">Bogura</option>
               </select>
             </div>
 
