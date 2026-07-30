@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Stethoscope, ShieldCheck, Award, HeartHandshake, PhoneCall, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, MapPin, Stethoscope, ShieldCheck, Award, HeartHandshake, PhoneCall, ChevronLeft, ChevronRight, Activity, Sparkles, Building2, HeartPulse, Clock, CheckCircle2 } from 'lucide-react';
 
 const SLIDES = [
   {
@@ -33,6 +33,15 @@ const SLIDES = [
     titleSuffix: ' Nationwide',
     subtitle: 'Compare surgery, ICU, and diagnostic procedure expenses across Dhaka, Chittagong, Sylhet, and major medical hubs.',
   }
+];
+
+const MARQUEE_ITEMS = [
+  { icon: PhoneCall, text: '24/7 National Emergency Hotline: 10616 for Ambulance & ICU', highlight: 'HOTLINE', color: 'text-rose-400 border-rose-500/40 bg-rose-500/10' },
+  { icon: ShieldCheck, text: '1,200+ BMDC Verified Specialist Doctors', highlight: 'VERIFIED', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10' },
+  { icon: Building2, text: '50+ Top Accredited Hospitals & Diagnostic Centers', highlight: 'HOSPITALS', color: 'text-sky-400 border-sky-500/40 bg-sky-500/10' },
+  { icon: HeartPulse, text: 'Instant Free Chamber & Telemedicine Booking', highlight: '100% FREE', color: 'text-teal-400 border-teal-500/40 bg-teal-500/10' },
+  { icon: Activity, text: 'Transparent Surgery, ICU & Lab Procedure Cost Estimates', highlight: 'ESTIMATES', color: 'text-amber-400 border-amber-500/40 bg-amber-500/10' },
+  { icon: Sparkles, text: 'Dhaka • Chittagong • Sylhet • Rajshahi • Khulna • Barisal • Rangpur', highlight: 'NATIONWIDE', color: 'text-purple-400 border-purple-500/40 bg-purple-500/10' },
 ];
 
 export default function Hero() {
@@ -74,7 +83,7 @@ export default function Hero() {
 
   return (
     <section 
-      className="relative overflow-hidden py-16 lg:py-24 transition-colors duration-500 border-b border-slate-200 dark:border-slate-800/80 min-h-[640px] flex items-center"
+      className="relative overflow-hidden pt-12 pb-0 lg:pt-16 transition-colors duration-500 border-b border-slate-200 dark:border-slate-800/80 min-h-[640px] flex flex-col justify-between"
       onMouseEnter={() => setIsAutoplay(false)}
       onMouseLeave={() => setIsAutoplay(true)}
     >
@@ -313,6 +322,43 @@ export default function Hero() {
 
         </div>
       </div>
+
+      {/* Dynamic Infinite Marquee at the Bottom of Banner */}
+      <div className="w-full mt-10 relative z-20 overflow-hidden bg-slate-950/85 backdrop-blur-md border-t border-slate-800/80 py-3.5 shadow-2xl">
+        {/* Left & Right Gradient Mask Overlays */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />
+
+        <div className="flex overflow-hidden select-none">
+          <motion.div
+            className="flex items-center space-x-6 sm:space-x-8 whitespace-nowrap min-w-full"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{
+              repeat: Infinity,
+              repeatType: 'loop',
+              duration: 32,
+              ease: 'linear',
+            }}
+          >
+            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, idx) => {
+              const IconComponent = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="inline-flex items-center space-x-3 bg-slate-900/90 border border-slate-800 hover:border-sky-500/50 px-4 py-2 rounded-full text-xs sm:text-sm font-medium text-slate-200 transition-all duration-300 shadow-md hover:scale-105"
+                >
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black tracking-wider uppercase border ${item.color}`}>
+                    {item.highlight}
+                  </span>
+                  <IconComponent className="w-4 h-4 text-sky-400 shrink-0" />
+                  <span className="text-slate-200 font-semibold">{item.text}</span>
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </div>
+
     </section>
   );
 }
