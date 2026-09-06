@@ -8,9 +8,14 @@ import {
   ShieldAlert, 
   Search, 
   MapPin, 
+  CheckCircle2, 
+  AlertCircle, 
+  X, 
+  Send, 
   Star 
 } from 'lucide-react';
-import { fetchEmergencyHotlines, fetchBloodDonors, fetchAmbulances } from '../../lib/api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { fetchEmergencyHotlines, fetchBloodDonors, fetchAmbulances, submitBloodRequest, bookAmbulance } from '../../lib/api';
 
 export default function EmergencyPage() {
   const [activeTab, setActiveTab] = useState('donors');
@@ -23,8 +28,41 @@ export default function EmergencyPage() {
   const [ambulances, setAmbulances] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [showBloodModal, setShowBloodModal] = useState(false);
+  const [showAmbulanceModal, setShowAmbulanceModal] = useState(false);
+
+  const [bloodForm, setBloodForm] = useState({
+    patientName: '',
+    bloodGroup: 'O+',
+    unitsNeeded: 1,
+    hospitalName: '',
+    district: 'Dhaka',
+    contactPhone: '',
+    urgencyLevel: 'Immediate (Within 2 Hours)'
+  });
+
+  const [ambulanceForm, setAmbulanceForm] = useState({
+    senderName: '',
+    pickupLocation: '',
+    destination: '',
+    phone: '',
+    ambulanceType: 'ICU Ambulance'
+  });
+
+  const [notification, setNotification] = useState(null);
+
   const bloodGroups = ['All', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   const districts = ['All', 'Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi'];
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      const bg = urlParams.get('bloodGroup');
+      if (tab) setActiveTab(tab);
+      if (bg) setBloodGroupFilter(bg);
+    }
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -47,6 +85,44 @@ export default function EmergencyPage() {
     }
     loadData();
   }, [bloodGroupFilter, districtFilter]);
+
+  const handleBloodSubmit = async (e) => {
+    e.preventDefault();
+    const res = await submitBloodRequest(bloodForm);
+    if (res.success) {
+      setNotification({ type: 'success', text: res.message });
+      setShowBloodModal(false);
+      setBloodForm({
+        patientName: '',
+        bloodGroup: 'O+',
+        unitsNeeded: 1,
+        hospitalName: '',
+        district: 'Dhaka',
+        contactPhone: '',
+        urgencyLevel: 'Immediate (Within 2 Hours)'
+      });
+    } else {
+      setNotification({ type: 'error', text: res.message || 'Failed to submit request.' });
+    }
+  };
+
+  const handleAmbulanceSubmit = async (e) => {
+    e.preventDefault();
+    const res = await bookAmbulance(ambulanceForm);
+    if (res.success) {
+      setNotification({ type: 'success', text: res.message });
+      setShowAmbulanceModal(false);
+      setAmbulanceForm({
+        senderName: '',
+        pickupLocation: '',
+        destination: '',
+        phone: '',
+        ambulanceType: 'ICU Ambulance'
+      });
+    } else {
+      setNotification({ type: 'error', text: res.message || 'Failed to book ambulance.' });
+    }
+  };
 
   const filteredDonors = donors.filter(d => 
     d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,8 +148,54 @@ export default function EmergencyPage() {
               Find verified blood donors instantly in your area, contact round-the-clock emergency medical hotlines, or request urgent ICU ambulance services.
             </p>
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <button
+              onClick={() => setShowBloodModal(true)}
+              className="flex items-center justify-center space-x-2 bg-white text-rose-700 hover:bg-rose-50 font-extrabold px-6 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-0.5 text-sm cursor-pointer"
+            >
+              <Droplets className="w-5 h-5 text-rose-600" />
+              <span>Post Urgent Blood Request</span>
+            </button>
+
+            <button
+              onClick={() => setShowAmbulanceModal(true)}
+              className="flex items-center justify-center space-x-2 bg-rose-900/60 hover:bg-rose-900/80 border border-white/30 text-white font-bold px-6 py-3.5 rounded-2xl backdrop-blur-md transition text-sm cursor-pointer"
+            >
+              <Truck className="w-5 h-5 text-teal-300" />
+              <span>Request Ambulance</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="max-w-4xl mx-auto px-4 mt-6"
+          >
+            <div className={`p-4 rounded-2xl flex items-center justify-between shadow-lg ${
+              notification.type === 'success' 
+                ? 'bg-emerald-500 text-white border border-emerald-400' 
+                : 'bg-rose-500 text-white border border-rose-400'
+            }`}>
+              <div className="flex items-center space-x-3">
+                {notification.type === 'success' ? <CheckCircle2 className="w-6 h-6" /> : <AlertCircle className="w-6 h-6" />}
+                <span className="font-bold text-sm sm:text-base">{notification.text}</span>
+              </div>
+              <button 
+                onClick={() => setNotification(null)}
+                className="p-1 hover:bg-white/20 rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
@@ -119,7 +241,6 @@ export default function EmergencyPage() {
       {/* TAB 1: BLOOD DONORS DIRECTORY */}
       {activeTab === 'donors' && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
-          
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-sm space-y-4">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative w-full md:w-80">
@@ -308,9 +429,197 @@ export default function EmergencyPage() {
                     <PhoneCall className="w-3.5 h-3.5 text-rose-400" />
                     <span>Direct Call</span>
                   </a>
+                  <button
+                    onClick={() => {
+                      setAmbulanceForm(prev => ({ ...prev, ambulanceType: amb.type }));
+                      setShowAmbulanceModal(true);
+                    }}
+                    className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition cursor-pointer"
+                  >
+                    Book Online
+                  </button>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: REQUEST BLOOD FORM */}
+      {showBloodModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 relative">
+            <button
+              onClick={() => setShowBloodModal(false)}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                <Droplets className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white">Post Urgent Blood Request</h3>
+                <p className="text-xs text-slate-500">Notify active voluntary blood donors immediately</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleBloodSubmit} className="space-y-4 text-xs font-semibold">
+              <div>
+                <label className="block text-slate-600 dark:text-slate-400 mb-1">Patient Full Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Rahim Chowdhury"
+                  value={bloodForm.patientName}
+                  onChange={(e) => setBloodForm({ ...bloodForm, patientName: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-rose-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Blood Group Required</label>
+                  <select
+                    value={bloodForm.bloodGroup}
+                    onChange={(e) => setBloodForm({ ...bloodForm, bloodGroup: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-rose-500"
+                  >
+                    {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(bg => (
+                      <option key={bg} value={bg}>{bg}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Bags / Units Needed</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={bloodForm.unitsNeeded}
+                    onChange={(e) => setBloodForm({ ...bloodForm, unitsNeeded: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-rose-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Hospital Name & Location</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Square Hospital, Dhaka"
+                    value={bloodForm.hospitalName}
+                    onChange={(e) => setBloodForm({ ...bloodForm, hospitalName: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-rose-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Contact Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="017XXXXXXXX"
+                    value={bloodForm.contactPhone}
+                    onChange={(e) => setBloodForm({ ...bloodForm, contactPhone: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-rose-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition cursor-pointer flex items-center justify-center space-x-2 mt-4"
+              >
+                <Send className="w-4 h-4" />
+                <span>Submit Blood Request</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: BOOK AMBULANCE FORM */}
+      {showAmbulanceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 relative">
+            <button
+              onClick={() => setShowAmbulanceModal(false)}
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white">Emergency Ambulance Dispatch</h3>
+                <p className="text-xs text-slate-500">Direct booking request to nearest dispatch center</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAmbulanceSubmit} className="space-y-4 text-xs font-semibold">
+              <div>
+                <label className="block text-slate-600 dark:text-slate-400 mb-1">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Your Name"
+                  value={ambulanceForm.senderName}
+                  onChange={(e) => setAmbulanceForm({ ...ambulanceForm, senderName: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-600 dark:text-slate-400 mb-1">Pickup Address / Location</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="House/Road no, Area, City"
+                  value={ambulanceForm.pickupLocation}
+                  onChange={(e) => setAmbulanceForm({ ...ambulanceForm, pickupLocation: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-teal-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Destination Hospital</label>
+                  <input
+                    type="text"
+                    placeholder="Hospital Name"
+                    value={ambulanceForm.destination}
+                    onChange={(e) => setAmbulanceForm({ ...ambulanceForm, destination: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1">Contact Phone</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="017XXXXXXXX"
+                    value={ambulanceForm.phone}
+                    onChange={(e) => setAmbulanceForm({ ...ambulanceForm, phone: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border-0 text-sm focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition cursor-pointer flex items-center justify-center space-x-2 mt-4"
+              >
+                <Truck className="w-4 h-4" />
+                <span>Confirm Ambulance Request</span>
+              </button>
+            </form>
           </div>
         </div>
       )}
