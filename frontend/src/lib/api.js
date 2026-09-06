@@ -84,3 +84,66 @@ export async function bookAppointment(appointmentData) {
     return { success: false, message: 'Connection error while booking appointment.' };
   }
 }
+
+export async function fetchEmergencyHotlines() {
+  try {
+    const res = await fetch(`${API_BASE}/emergency/hotlines`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch emergency hotlines');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchEmergencyHotlines:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function fetchBloodDonors(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/emergency/donors?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch blood donors');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchBloodDonors:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function fetchAmbulances(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/emergency/ambulances?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch ambulances');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchAmbulances:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function submitBloodRequest(requestData) {
+  try {
+    const res = await fetch(`${API_BASE}/emergency/request-blood`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error submitBloodRequest:', err);
+    return { success: false, message: 'Error submitting blood request.' };
+  }
+}
+
+export async function bookAmbulance(bookingData) {
+  try {
+    const res = await fetch(`${API_BASE}/emergency/book-ambulance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error bookAmbulance:', err);
+    return { success: false, message: 'Error submitting ambulance request.' };
+  }
+}
