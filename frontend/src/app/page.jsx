@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
+import EmergencyBanner from '../components/EmergencyBanner';
 import SpecialtyGrid from '../components/SpecialtyGrid';
 import DoctorCard from '../components/DoctorCard';
 import HospitalCard from '../components/HospitalCard';
@@ -29,6 +30,9 @@ export default async function HomePage() {
       
       {/* Hero Section */}
       <Hero />
+
+      {/* 24/7 Emergency & Blood Donor Banner */}
+      <EmergencyBanner />
 
       {/* Specialty Categories Grid */}
       <SpecialtyGrid specialists={specialists} />
