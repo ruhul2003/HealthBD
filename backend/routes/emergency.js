@@ -201,10 +201,10 @@ router.post('/request-blood', (req, res) => {
     message: `Blood request for ${unitsNeeded || 1} unit(s) of ${bloodGroup} registered successfully! Nearby donors will be notified.`,
     requestDetails: {
       requestId: 'REQ-' + Math.floor(100000 + Math.random() * 900000),
-      patientName,
+      patientName: patientName.trim(),
       bloodGroup,
-      hospitalName,
-      contactPhone,
+      hospitalName: hospitalName ? hospitalName.trim() : 'N/A',
+      contactPhone: contactPhone.trim(),
       urgencyLevel: urgencyLevel || 'Immediate',
       createdAt: new Date().toISOString()
     }
