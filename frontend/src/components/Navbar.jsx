@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth-context';
-import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown } from 'lucide-react';
+import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown, Droplets } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -19,6 +19,7 @@ export default function Navbar() {
     { name: 'Find Doctors', href: '/doctors', icon: Stethoscope },
     { name: 'Hospitals', href: '/hospitals', icon: Building2 },
     { name: 'Cost Estimator', href: '/costs', icon: Calculator },
+    { name: 'Emergency & Blood', href: '/emergency', icon: Droplets },
   ];
 
   const isActive = (path) => pathname === path;
@@ -67,13 +68,13 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-4">
             
             {/* Emergency Hotline Button */}
-            <a
-              href="tel:10616"
+            <Link
+              href="/emergency"
               className="flex items-center space-x-2 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 px-3.5 py-1.5 rounded-full text-xs font-extrabold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 animate-bounce" />
-              <span>Emergency 10616</span>
-            </a>
+              <span>Emergency 999 / Blood</span>
+            </Link>
 
             {/* Professional Theme Switcher Toggle */}
             <button
