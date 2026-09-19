@@ -9,6 +9,7 @@ import specialistsRouter from './routes/specialists.js';
 import costsRouter from './routes/costs.js';
 import appointmentsRouter from './routes/appointments.js';
 import emergencyRouter from './routes/emergency.js';
+import medicinesRouter from './routes/medicines.js';
 
 dotenv.config();
 
@@ -34,7 +35,8 @@ app.get('/', (req, res) => {
       '/api/specialists',
       '/api/costs',
       '/api/appointments',
-      '/api/emergency'
+      '/api/emergency',
+      '/api/medicines'
     ]
   });
 });
@@ -46,6 +48,7 @@ app.use('/api/specialists', specialistsRouter);
 app.use('/api/costs', costsRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/emergency', emergencyRouter);
+app.use('/api/medicines', medicinesRouter);
 
 // Database Connection & Server Initialization
 async function startServer() {
