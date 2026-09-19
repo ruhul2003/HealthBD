@@ -5,6 +5,7 @@ import SpecialtyGrid from '../components/SpecialtyGrid';
 import DoctorCard from '../components/DoctorCard';
 import HospitalCard from '../components/HospitalCard';
 import CostEstimatorWidget from '../components/CostEstimatorWidget';
+import HealthToolsWidget from '../components/HealthToolsWidget';
 import { fetchDoctors, fetchHospitals, fetchSpecialists, fetchTreatmentCosts } from '../lib/api';
 import Link from 'next/link';
 import { Stethoscope, Building2, PhoneCall, ShieldCheck, ArrowRight } from 'lucide-react';
@@ -106,6 +107,9 @@ export default async function HomePage() {
 
         </div>
       </section>
+
+      {/* Interactive Health Tools Widget */}
+      <HealthToolsWidget />
 
       {/* Medical Treatment Cost Estimator Widget */}
       <CostEstimatorWidget costs={costs} />
