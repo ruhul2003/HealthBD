@@ -147,3 +147,38 @@ export async function bookAmbulance(bookingData) {
     return { success: false, message: 'Error submitting ambulance request.' };
   }
 }
+
+export async function fetchMedicines(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/medicines?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch medicines');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchMedicines:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function fetchMedicineCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/medicines/categories`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch medicine categories');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchMedicineCategories:', err);
+    return { success: false, data: ['All'] };
+  }
+}
+
+export async function fetchMedicineById(id) {
+  try {
+    const res = await fetch(`${API_BASE}/medicines/${id}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch medicine detail');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchMedicineById:', err);
+    return { success: false, data: null };
+  }
+}
+
