@@ -182,3 +182,46 @@ export async function fetchMedicineById(id) {
   }
 }
 
+export async function calculateBMI(data) {
+  try {
+    const res = await fetch(`${API_BASE}/health-tools/bmi`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error calculateBMI:', err);
+    return { success: false, message: 'Could not connect to health tools service.' };
+  }
+}
+
+export async function calculateWaterIntake(data) {
+  try {
+    const res = await fetch(`${API_BASE}/health-tools/water`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error calculateWaterIntake:', err);
+    return { success: false, message: 'Could not connect to health tools service.' };
+  }
+}
+
+export async function calculateBloodPressure(data) {
+  try {
+    const res = await fetch(`${API_BASE}/health-tools/blood-pressure`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error calculateBloodPressure:', err);
+    return { success: false, message: 'Could not connect to health tools service.' };
+  }
+}
+
+
