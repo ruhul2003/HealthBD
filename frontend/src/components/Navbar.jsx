@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth-context';
-import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown, Droplets } from 'lucide-react';
+import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown, Droplets, Pill } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -18,6 +18,7 @@ export default function Navbar() {
     { name: 'Home', href: '/' },
     { name: 'Find Doctors', href: '/doctors', icon: Stethoscope },
     { name: 'Hospitals', href: '/hospitals', icon: Building2 },
+    { name: 'Medicines', href: '/medicines', icon: Pill },
     { name: 'Cost Estimator', href: '/costs', icon: Calculator },
     { name: 'Emergency & Blood', href: '/emergency', icon: Droplets },
   ];

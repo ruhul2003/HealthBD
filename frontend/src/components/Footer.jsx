@@ -59,6 +59,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/medicines" className="hover:text-sky-400 transition flex items-center space-x-1.5">
+                  <ArrowRight className="w-3.5 h-3.5 text-sky-500" />
+                  <span>Medicines & Generic Drugs</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/login" className="hover:text-sky-400 transition flex items-center space-x-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-sky-500" />
                   <span>Patient Login</span>
