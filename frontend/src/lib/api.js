@@ -261,5 +261,31 @@ export async function bookDiagnosticTest(data) {
   }
 }
 
+export async function fetchDoctorReviews(doctorId) {
+  try {
+    const res = await fetch(`${API_BASE}/doctors/${doctorId}/reviews`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch doctor reviews');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchDoctorReviews:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function submitDoctorReview(doctorId, reviewData) {
+  try {
+    const res = await fetch(`${API_BASE}/doctors/${doctorId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error submitDoctorReview:', err);
+    return { success: false, message: 'Could not submit review.' };
+  }
+}
+
+
 
 
