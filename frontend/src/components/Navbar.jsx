@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth-context';
-import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown, Droplets, Pill } from 'lucide-react';
+import { PhoneCall, Sun, Moon, LogOut, Menu, X, Stethoscope, Building2, Calculator, ChevronDown, Droplets, Pill, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -126,6 +126,14 @@ export default function Navbar() {
                       <p className="text-xs text-slate-400 font-medium">Signed in as</p>
                       <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user.email}</p>
                     </div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80"
+                    >
+                      <Calendar className="w-4 h-4 text-teal-500" />
+                      <span>My Appointments</span>
+                    </Link>
                     <Link
                       href="/doctors"
                       onClick={() => setUserDropdownOpen(false)}

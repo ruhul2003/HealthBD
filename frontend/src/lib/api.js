@@ -320,6 +320,31 @@ export async function fetchArticleById(id) {
   }
 }
 
+export async function fetchAppointments(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/appointments?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch appointments');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchAppointments:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function cancelAppointment(id) {
+  try {
+    const res = await fetch(`${API_BASE}/appointments/${id}`, {
+      method: 'DELETE'
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error cancelAppointment:', err);
+    return { success: false, message: 'Failed to cancel appointment.' };
+  }
+}
+
+
 
 
 
