@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Calendar, Clock, User, Phone, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Calendar, Clock, User, Phone, Mail, CheckCircle2, AlertCircle, Loader2, Video, Building2 } from 'lucide-react';
 import { bookAppointment } from '../lib/api';
 
 export default function BookingModal({ doctor, isOpen, onClose }) {
@@ -10,6 +10,7 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
   const [patientEmail, setPatientEmail] = useState('');
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState(doctor?.timing ? doctor.timing.split(' - ')[0] : '5:00 PM');
+  const [consultationType, setConsultationType] = useState('In-Person Chamber');
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successResult, setSuccessResult] = useState(null);
@@ -37,6 +38,7 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
       patientEmail,
       appointmentDate,
       appointmentTime,
+      consultationType,
       notes
     });
 
@@ -78,9 +80,24 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
             <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl text-left space-y-2 text-sm border border-slate-200 dark:border-slate-700">
               <p><strong className="text-slate-900 dark:text-white">Booking ID:</strong> <span className="text-sky-600 font-mono font-bold">{successResult.bookingId}</span></p>
               <p><strong className="text-slate-900 dark:text-white">Patient Name:</strong> {successResult.patientName}</p>
-              <p><strong className="text-slate-900 dark:text-white">Chamber / Hospital:</strong> {doctor.hospital}</p>
+              <p><strong className="text-slate-900 dark:text-white">Consultation Mode:</strong> <span className="text-sky-600 font-bold">{successResult.consultationType}</span></p>
+              <p><strong className="text-slate-900 dark:text-white">Location / Chamber:</strong> {successResult.consultationType === 'Online Video Consultation' ? 'Online Telehealth Video Room' : doctor.hospital}</p>
               <p><strong className="text-slate-900 dark:text-white">Date & Time:</strong> {successResult.appointmentDate} at {successResult.appointmentTime}</p>
               <p><strong className="text-slate-900 dark:text-white">Consultation Fee:</strong> ৳{doctor.fee} BDT</p>
+              {successResult.videoConsultationLink && (
+                <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                  <p className="text-xs text-slate-500 mb-1">Encrypted Telehealth Video Consultation Link:</p>
+                  <a
+                    href={successResult.videoConsultationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-500 transition"
+                  >
+                    <Video className="w-3.5 h-3.5" />
+                    <span>Join Video Room Link</span>
+                  </a>
+                </div>
+              )}
             </div>
             <button
               onClick={onClose}
@@ -98,10 +115,46 @@ export default function BookingModal({ doctor, isOpen, onClose }) {
               </div>
             )}
 
-            {/* Chamber Info */}
+            {/* Consultation Type Selector */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Select Consultation Type</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConsultationType('In-Person Chamber')}
+                  className={`flex items-center justify-center space-x-2 p-2.5 rounded-xl border text-xs font-bold transition ${
+                    consultationType === 'In-Person Chamber'
+                      ? 'bg-sky-50 dark:bg-sky-950/80 border-sky-500 text-sky-700 dark:text-sky-300 shadow-xs'
+                      : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span>Chamber Visit</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setConsultationType('Online Video Consultation')}
+                  className={`flex items-center justify-center space-x-2 p-2.5 rounded-xl border text-xs font-bold transition ${
+                    consultationType === 'Online Video Consultation'
+                      ? 'bg-teal-50 dark:bg-teal-950/80 border-teal-500 text-teal-700 dark:text-teal-300 shadow-xs'
+                      : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                  }`}
+                >
+                  <Video className="w-4 h-4" />
+                  <span>Video Telehealth</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Chamber / Telemedicine Info */}
             <div className="bg-sky-50 dark:bg-sky-950/40 p-3 rounded-2xl border border-sky-200 dark:border-sky-800/60 text-xs space-y-1">
-              <p className="font-bold text-sky-900 dark:text-sky-200">Chamber: {doctor.hospital}</p>
-              <p className="text-slate-600 dark:text-slate-300">{doctor.hospitalAddress}</p>
+              <p className="font-bold text-sky-900 dark:text-sky-200">
+                {consultationType === 'Online Video Consultation' ? 'Online Telemedicine HD Video Chamber' : `Chamber: ${doctor.hospital}`}
+              </p>
+              <p className="text-slate-600 dark:text-slate-300">
+                {consultationType === 'Online Video Consultation' ? 'Connect live with the doctor via encrypted video from anywhere in Bangladesh.' : doctor.hospitalAddress}
+              </p>
               <p className="font-semibold text-emerald-600 dark:text-emerald-400">Consultation Fee: ৳{doctor.fee} BDT</p>
             </div>
 
