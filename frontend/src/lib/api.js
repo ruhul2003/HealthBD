@@ -224,4 +224,42 @@ export async function calculateBloodPressure(data) {
   }
 }
 
+export async function fetchDiagnosticTests(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/diagnostics?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch diagnostics');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchDiagnosticTests:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function fetchDiagnosticCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/diagnostics/categories`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch diagnostic categories');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchDiagnosticCategories:', err);
+    return { success: false, data: ['All'] };
+  }
+}
+
+export async function bookDiagnosticTest(data) {
+  try {
+    const res = await fetch(`${API_BASE}/diagnostics/book-test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error bookDiagnosticTest:', err);
+    return { success: false, message: 'Could not submit test booking inquiry.' };
+  }
+}
+
+
 
