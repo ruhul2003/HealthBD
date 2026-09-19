@@ -286,6 +286,41 @@ export async function submitDoctorReview(doctorId, reviewData) {
   }
 }
 
+export async function fetchArticles(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/articles?${query}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch articles');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchArticles:', err);
+    return { success: false, data: [] };
+  }
+}
+
+export async function fetchArticleCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/articles/categories`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch article categories');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchArticleCategories:', err);
+    return { success: false, data: ['All'] };
+  }
+}
+
+export async function fetchArticleById(id) {
+  try {
+    const res = await fetch(`${API_BASE}/articles/${id}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch article detail');
+    return await res.json();
+  } catch (err) {
+    console.error('API Error fetchArticleById:', err);
+    return { success: false, data: null };
+  }
+}
+
+
 
 
 
